@@ -3,8 +3,9 @@ from GenericChatUtil import GenericConversationStats
 from GenericChatUtil import GenericUserStats
 
 def conversation_to_stat_blocks(conversation):
-
     stat_block = GenericStatBlock()
+
+    # Process the entire conversation.
     for message in conversation.message_list:
         user_id = message.user_id
         if (user_id not in stat_block.user_stats):
