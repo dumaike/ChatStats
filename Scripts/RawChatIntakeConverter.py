@@ -19,8 +19,10 @@ def google_messages_to_generic(file_path):
             new_chat_message = GenericMessage()            
             new_chat_message.user_id = data[message_key]['SenderId']
             new_chat_message.timestamp = GenericChatUtils.string_to_datetime(
-                data[message_key]['Timestamp'])
-            new_chat_message.message_text = data[message_key]['Message']      
+                data[message_key]['Timestamp'], "%Y-%m-%d %H:%M:%S")
+            new_chat_message.message_text = data[message_key]['Message']      \
+            # Google Messages lists in reverse order, so we insert new 
+            # messages at the front, not the back.
             chat_record.message_list.insert(0, new_chat_message)
 
     return chat_record
