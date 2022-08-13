@@ -1,4 +1,4 @@
 
 Data/
-Scripts/_pycache_/
+Scripts/__pycache__/
 Scripts/Config.py
