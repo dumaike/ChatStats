@@ -1,3 +1,5 @@
+import datetime
+
 class GenericMessage:
     user_id = ""
     message_text = ""
@@ -25,8 +27,8 @@ class GenericUserStats:
     longest_sentence = 0
     
 class GenericConversationStats:
-    start_timestamp = 0
-    end_timestamp = 0
+    start_timestamp = datetime.datetime.max
+    end_timestamp = datetime.datetime.min
     message_count = 0
 
 class GenericStatBlock:

@@ -1,5 +1,6 @@
-from GenericChatUtil import GenericConversation
-from GenericChatUtil import GenericMessage
+from GenericChatClasses import GenericConversation
+from GenericChatClasses import GenericMessage
+import GenericChatUtils
 import Config
 import json
 
@@ -14,10 +15,11 @@ def google_messages_to_generic(file_path):
         if 'Message' in data[message_key] \
             and 'SenderId' in data[message_key] \
                 and 'Timestamp' in data[message_key]:
-                
+
             new_chat_message = GenericMessage()            
             new_chat_message.user_id = data[message_key]['SenderId']
-            new_chat_message.timestamp = data[message_key]['Timestamp']
+            new_chat_message.timestamp = GenericChatUtils.string_to_datetime(
+                data[message_key]['Timestamp'])
             new_chat_message.message_text = data[message_key]['Message']      
             chat_record.message_list.insert(0, new_chat_message)
 

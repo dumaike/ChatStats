@@ -1,5 +1,5 @@
-from GenericChatUtil import GenericStatBlock
-from GenericChatUtil import GenericUserStats
+from GenericChatClasses import GenericStatBlock
+from GenericChatClasses import GenericUserStats
 
 def conversation_to_stat_blocks(conversation):
     stat_block = GenericStatBlock()
@@ -19,6 +19,10 @@ def conversation_to_stat_blocks(conversation):
 
         # Update global stats.
         stat_block.global_stats.message_count += 1
+        if stat_block.global_stats.start_timestamp > message.timestamp:
+            stat_block.global_stats.start_timestamp = message.timestamp
+        if stat_block.global_stats.end_timestamp < message.timestamp:
+            stat_block.global_stats.end_timestamp = message.timestamp
 
     return stat_block
 
