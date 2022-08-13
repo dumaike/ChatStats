@@ -1,4 +1,3 @@
-import json
 import Config
 import RawChatIntakeConverter
 import GenericChatAnalyzer

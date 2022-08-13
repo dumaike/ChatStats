@@ -1,5 +1,4 @@
 from GenericChatUtil import GenericStatBlock
-from GenericChatUtil import GenericConversationStats
 from GenericChatUtil import GenericUserStats
 
 def conversation_to_stat_blocks(conversation):
