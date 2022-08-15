@@ -1,14 +1,26 @@
 {
     "51f421ec_6917_4575_b666_7e61e0dc7a19": {
         "SenderId": "(111) 222-2222",
-        "Message": "Hope your apartment is nice and cool!",
+        "Message": "Hope your apartment is nice and cool! ❤️",
         "Timestamp": "2022-08-10 00:44:37",
         "Attachment count": "0"
     },
     "1375c103_aa73_4dd0_8ddf_784d8ef8d2e2": {
         "SenderId": "(333) 444-4444",
-        "Message": "Good luck with your internet. My anki troubles are zero rush",
+        "Message": "Good luck with your internet. 🤣 My anki troubles are zero rush",
         "Timestamp": "2022-08-10 00:44:06",
+        "Attachment count": "0"
+    },    
+    "2c00b876_c2a1_4c3e_999e_e0804d70dc18": {
+        "SenderId": "(555) 666-6666",
+        "Message": "What time do you think I should go to Google tonight?",
+        "Timestamp": "2022-08-11 18:12:02",
+        "Attachment count": "0"
+    },
+    "8e732910_d235_479b_b578_6627fbbfe362": {
+        "SenderId": "(333) 444-4444",
+        "Message": "Haha you gotta start somewhere 😂",
+        "Timestamp": "2022-08-11 18:11:04",
         "Attachment count": "0"
     },
     "footer": ""
