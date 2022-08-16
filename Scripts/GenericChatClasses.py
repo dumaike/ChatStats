@@ -16,6 +16,7 @@ class GenericUserStats:
         self.response_count = 0
         self.total_char_count = 0
         self.longest_message = 0
+        self.first_message_of_day_count = 0
         self.image_count = 0
         self.longest_chain = 0
         self.longest_delay_caused = 0

@@ -3,3 +3,4 @@ Data/
 Scripts/__pycache__/
 Scripts/Config.py
 Scripts/text_stats.json
+Scripts/conversation.json
