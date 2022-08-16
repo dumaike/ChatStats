@@ -18,3 +18,6 @@ def timestamp_to_datetime(timestamp):
     
 def timestamp_to_timedelta(timestamp):    
     return datetime.timedelta(seconds=timestamp)
+
+def pretty_string(input):
+    return '{:,}'.format(input)

@@ -1,9 +1,10 @@
-from GenericChatClasses import GenericConversation, GenericStatBlock
+from GenericChatClasses import GenericConversation, GenericMessage, GenericStatBlock
 from GenericChatClasses import GenericUserStats
 
+import Config
 import emoji
 
-def conversation_to_stat_blocks(conversation : GenericConversation):
+def conversation_to_stat_blocks(conversation: GenericConversation):
     stat_block = GenericStatBlock()
 
     # Process the entire conversation.
@@ -15,20 +16,9 @@ def conversation_to_stat_blocks(conversation : GenericConversation):
             new_user_stats.message_count = 0
             stat_block.user_stats[user_id] = new_user_stats
 
-        # TODO: Break each stat calculation into a function.
-        # Update individual user stats.
         user_stats = stat_block.user_stats[user_id]
-        user_stats.message_count += 1
-
-        # Count the Emoji!
-        for character in message.message_text:            
-            # TODO: Filter out modifier emoji like skin tone and gender, as
-            # their count isn't reflective of a single emoji instance.
-            if emoji.is_emoji(character):
-                emoji_string = str(character)
-                if emoji_string not in user_stats.emoji_count_map:
-                    user_stats.emoji_count_map[emoji_string] = 0
-                user_stats.emoji_count_map[emoji_string] += 1
+        track_message_count_stats(user_stats)
+        track_emoji_stats(message, user_stats)
 
         # Update global stats.
         stat_block.conversation_stats.message_count += 1
@@ -39,4 +29,14 @@ def conversation_to_stat_blocks(conversation : GenericConversation):
 
     return stat_block
 
-    
+def track_message_count_stats(user_stats : GenericUserStats):
+    user_stats.message_count += 1
+
+def track_emoji_stats(message : GenericMessage, user_stats : GenericUserStats):
+    for character in message.message_text:
+        if emoji.is_emoji(character) \
+            and character not in Config.ignored_emoji_list:
+            emoji_string = str(character)
+            if emoji_string not in user_stats.emoji_count_map:
+                user_stats.emoji_count_map[emoji_string] = 0
+            user_stats.emoji_count_map[emoji_string] += 1

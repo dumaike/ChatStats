@@ -2,24 +2,43 @@ import json
 
 from GenericChatClasses import GenericStatBlock
 import GenericChatUtils
+import Config
 
 
 def process_stats(stat_block: GenericStatBlock):
     for user_stats in stat_block.user_stats.values():
+        # If the user has a config alias, set it now.
+        if user_stats.user_id in Config.username_aliases:
+            user_stats.user_id = Config.username_aliases[user_stats.user_id]
+
         print("User: " + user_stats.user_id + " - Message Count: " +
-              pretty_string(user_stats.message_count))
+              GenericChatUtils.pretty_string(user_stats.message_count))
 
-        top_ten_emoji = []
-        for emoji in user_stats.emoji_count_map:
-            top_ten_emoji.append(
-                {'emoji': emoji, 'count': user_stats.emoji_count_map[emoji]})
+        sorted_emoji = []
+        total_emoji_count = 0
+        for emoji_char in user_stats.emoji_count_map:
+            total_emoji_count += user_stats.emoji_count_map[emoji_char]
+            sorted_emoji.append(
+                {'emoji': emoji_char, 'count': user_stats.emoji_count_map[emoji_char]})
 
-        top_ten_emoji = sorted(
-            top_ten_emoji, key=lambda x: x['count'], reverse=True)
-        top_ten_emoji = top_ten_emoji[0:10]
-        print(top_ten_emoji)
+        sorted_emoji = sorted(
+            sorted_emoji, key=lambda x: x['count'], reverse=True)
 
-    print('Total Messages: ' + pretty_string(
+        output_results = "Top 10 Emoji: "
+        for emoji_char in sorted_emoji[0:10]:
+            output_results += emoji_char['emoji'] + \
+                ": " + str(emoji_char['count']) + ", "
+        print(output_results)
+        print('Emoji Count: ' \
+            + GenericChatUtils.pretty_string(total_emoji_count))
+        print('Unique Emoji Used: ' \
+            + GenericChatUtils.pretty_string(len(sorted_emoji)))
+        user_stats.emoji_count_map = sorted_emoji
+
+        # To indicate the end of stats for one user.
+        print('***********************************************************')
+
+    print('Total Messages: ' + GenericChatUtils.pretty_string(
         stat_block.conversation_stats.message_count))
     print('First Messages: ' + str(GenericChatUtils.timestamp_to_datetime(
         stat_block.conversation_stats.start_timestamp)))
@@ -31,9 +50,7 @@ def process_stats(stat_block: GenericStatBlock):
     print('Elapsed Time: ' + str(GenericChatUtils.timestamp_to_timedelta(elapsed_time)))
     msgs_per_second = stat_block.conversation_stats.message_count / \
         elapsed_time
-    print('Messages Per Hour: ' + str(msgs_per_second*60*60))
-    print('Messages Per Waking Hour (16 hours/day): ' + str(
-        msgs_per_second*60*60*3/2))
+    print('Messages Per Day: ' + str(msgs_per_second*60*60*24))
 
     json_stats_str = json.dumps(stats_to_json(stat_block),
                                 indent=4, sort_keys=True,  ensure_ascii=False)
@@ -42,20 +59,16 @@ def process_stats(stat_block: GenericStatBlock):
         out_file.write(str(json_stats_str))
 
 
-def pretty_string(input):
-    return '{:,}'.format(input)
-
-
 def stats_to_json(stat_block: GenericStatBlock):
 
-    user_stats_array = []
+    user_stats_array = {}
     for single_user_stat in stat_block.user_stats.values():
         single_user_stat_dict = single_user_stat.__dict__
         # Add nested dictionaries.
         single_user_stat_dict['emoji_count_map'] = \
             single_user_stat.emoji_count_map
 
-        user_stats_array.append(single_user_stat_dict)
+        user_stats_array[single_user_stat.user_id] = single_user_stat_dict
 
     stats_dict = {'generic_stat_block': {
         'user_stats': user_stats_array, 'conversation_stats': stat_block.conversation_stats.__dict__}}
