@@ -29,10 +29,10 @@ def process_stats(stat_block: GenericStatBlock):
             output_results += emoji_char['emoji'] + \
                 ": " + str(emoji_char['count']) + ", "
         print(output_results)
-        print('Emoji Count: ' \
-            + GenericChatUtils.pretty_string(total_emoji_count))
-        print('Unique Emoji Used: ' \
-            + GenericChatUtils.pretty_string(len(sorted_emoji)))
+        print('Emoji Count: '
+              + GenericChatUtils.pretty_string(total_emoji_count))
+        print('Unique Emoji Used: '
+              + GenericChatUtils.pretty_string(len(sorted_emoji)))
         user_stats.emoji_count_map = sorted_emoji
 
         # To indicate the end of stats for one user.
@@ -51,6 +51,8 @@ def process_stats(stat_block: GenericStatBlock):
     msgs_per_second = stat_block.conversation_stats.message_count / \
         elapsed_time
     print('Messages Per Day: ' + str(msgs_per_second*60*60*24))
+    print('Longest Lull: ' + str(GenericChatUtils.timestamp_to_timedelta(
+        stat_block.conversation_stats.longest_lull.number)))
 
     json_stats_str = json.dumps(stats_to_json(stat_block),
                                 indent=4, sort_keys=True,  ensure_ascii=False)

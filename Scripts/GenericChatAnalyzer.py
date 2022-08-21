@@ -1,4 +1,4 @@
-from GenericChatClasses import GenericConversation, GenericMessage, GenericStatBlock
+from GenericChatClasses import GenericConversation, GenericConversationStats, GenericMessage, GenericStatBlock
 from GenericChatClasses import GenericUserStats
 
 import GenericChatUtils
@@ -27,6 +27,8 @@ def conversation_to_stat_blocks(conversation: GenericConversation):
         track_message_count_stats(user_stats)
         track_emoji_stats(conversation, idx, user_stats)
         track_first_message_count(conversation, idx, user_stats)
+        track_longest_lull(conversation, idx, stat_block.conversation_stats)
+        track_longest_chain(conversation, idx, user_stats)
 
         # Update global stats.
         stat_block.conversation_stats.message_count += 1
@@ -42,7 +44,8 @@ def track_message_count_stats(user_stats: GenericUserStats):
     user_stats.message_count += 1
 
 
-def track_emoji_stats(conversation: GenericConversation, idx, user_stats: GenericUserStats):
+def track_emoji_stats(
+        conversation: GenericConversation, idx, user_stats: GenericUserStats):
     message = conversation.message_list[idx]
     for character in message.message_text:
         if emoji.is_emoji(character) \
@@ -53,8 +56,10 @@ def track_emoji_stats(conversation: GenericConversation, idx, user_stats: Generi
             user_stats.emoji_count_map[emoji_string] += 1
 
 
-def track_first_message_count(conversation: GenericConversation, idx, user_stats: GenericUserStats):
-    # If this is the first message of the conversation, it's the first of the day.
+def track_first_message_count(
+        conversation: GenericConversation, idx, user_stats: GenericUserStats):
+    # If this is the first message of the conversation, it's the first of the
+    # day.
     if idx == 0:
         user_stats.first_message_of_day_count += 1
         return
@@ -71,6 +76,51 @@ def track_first_message_count(conversation: GenericConversation, idx, user_stats
 
     if prev_timestamp.day != cur_timestamp.day:
         user_stats.first_message_of_day_count += 1
+
+
+def track_longest_lull(
+    conversation: GenericConversation, idx,
+        conversation_stats: GenericConversationStats):
+    # If this is the first message of the conversation,
+    # we can't measure a lull.
+    if idx == 0:
+        return
+
+    prev_message = conversation.message_list[idx - 1]
+    prev_timestamp = GenericChatUtils.timestamp_to_datetime(
+        prev_message.timestamp)
+    cur_message = conversation.message_list[idx]
+    cur_timestamp = GenericChatUtils.timestamp_to_datetime(
+        cur_message.timestamp)
+
+    this_lull = (cur_timestamp - prev_timestamp).total_seconds()
+        
+    if this_lull > conversation_stats.longest_lull.number:
+        conversation_stats.longest_lull.number = this_lull
+        conversation_stats.longest_lull.message = prev_message
+
+
+def track_longest_chain(
+        conversation: GenericConversation, idx, user_stats: GenericUserStats):
+    # If this is the first message of the conversation, it's the first of the
+    # day.
+    if idx == 0:
+        user_stats.first_message_of_day_count += 1
+        return
+
+    prev_message = conversation.message_list[idx - 1]
+    prev_timestamp = GenericChatUtils.timestamp_to_datetime(
+        prev_message.timestamp)
+    cur_message = conversation.message_list[idx]
+    cur_timestamp = GenericChatUtils.timestamp_to_datetime(
+        cur_message.timestamp)
+
+    if (prev_timestamp > cur_timestamp):
+        print("ERROR: Unsorted Messages")
+
+    if prev_timestamp.day != cur_timestamp.day:
+        user_stats.first_message_of_day_count += 1
+
 
 def debug_write_conversation(conversation: GenericConversation):
     out_file_text = ''
