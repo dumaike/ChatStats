@@ -53,6 +53,7 @@ def conversation_to_reader(conversation: GenericConversation):
                             display: inline-block;
                             padding: 10px 20px;
                             position: relative;
+                            font: 1.2em "Fira Sans", sans-serif;
                         }
 
                         .chat-list .chat-message:before {
@@ -146,6 +147,7 @@ def conversation_to_reader(conversation: GenericConversation):
             # Message proprocessing            
             if len(message.message_text) == 0:
                 message.message_text  = "*Image*"
+            timestamp = GenericChatUtils.timestamp_to_datetime(message.timestamp)
 
             # CSS Styling
             message_html_block = ""
@@ -157,12 +159,12 @@ def conversation_to_reader(conversation: GenericConversation):
                         </div>
                         <div class="chat-body">
                             <div class="chat-message">
-                                <h5>{user_id}</h5>
+                                <h5>{user_id} - {timestamp}</h5>
                                 <p>{message_text}</p>
                             </div>
                         </div>
                     </li>                
-                """.format(user_id=user_id, message_text = message.message_text)
+                """.format(user_id=user_id, message_text = message.message_text, timestamp=timestamp)
             else:
                 message_html_block = """
                     <li class="out">
@@ -171,12 +173,12 @@ def conversation_to_reader(conversation: GenericConversation):
                         </div>
                         <div class="chat-body">
                             <div class="chat-message">
-                                <h5>{user_id}</h5>
+                                <h5>{user_id} - {timestamp}</h5>
                                 <p>{message_text}</p>
                             </div>
                         </div>
                     </li>        
-                """.format(user_id=user_id, message_text = message.message_text)
+                """.format(user_id=user_id, message_text = message.message_text, timestamp=timestamp)
 
             out_file.write(message_html_block)      
 
