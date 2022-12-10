@@ -29,7 +29,7 @@ def new_conversation_segment(start_idx, filename, conversation: GenericConversat
     with open(filename + ".html", 'w', encoding='utf-8') as out_file:
 
         conversation_as_str = ""        
-        out_file.write(get_html_header())
+        out_file.write(render_html_header())
 
         current_month = -1
 
@@ -72,35 +72,13 @@ def new_conversation_segment(start_idx, filename, conversation: GenericConversat
                     message.message_text = emoji.replace_emoji(message.message_text, replace=xml_escape)
 
                 # CSS Styling
-                message_html_block = ""
-                if user_id == "Mike":
-                    message_html_block = """            
-                        <li class="in">
-                            <div class="chat-img">
-                                <img alt="Avtar" src="https://drive.google.com/uc?id=1lnyZIBUytbzahvRm4R34LUEZzM80Xibg">
-                            </div>
-                            <div class="chat-body">
-                                <div class="chat-message">
-                                    <h5>{user_id} - {timestamp}</h5>
-                                    <p>{message_text}</p>
-                                </div>
-                            </div>
-                        </li>                
-                    """.format(user_id=user_id, message_text=message.message_text, timestamp=timestamp)
-                else:
-                    message_html_block = """
-                        <li class="out">
-                            <div class="chat-img">
-                                <img alt="Avtar" src="https://drive.google.com/uc?id=1Tb1l7laME_PFm6EQBafm9-1nyJxGX_Li">
-                            </div>
-                            <div class="chat-body">
-                                <div class="chat-message">
-                                    <h5>{user_id} - {timestamp}</h5>
-                                    <p>{message_text}</p>
-                                </div>
-                            </div>
-                        </li>        
-                    """.format(user_id=user_id, message_text=message.message_text, timestamp=timestamp)
+                message_html_block = render_single_message(
+                    "https://drive.google.com/uc?id=1lnyZIBUytbzahvRm4R34LUEZzM80Xibg" if user_id == "Mike" else "https://drive.google.com/uc?id=1Tb1l7laME_PFm6EQBafm9-1nyJxGX_Li",
+                    user_id,
+                    message.message_text,
+                    timestamp,
+                    "in" if user_id == "Mike" else "out"
+                )
                 out_file.write(message_html_block)
 
             if past_segment_limit:
@@ -134,7 +112,22 @@ def convert_emoji_to_html(input_string):
             output_string += char
     return output_string
 
-def get_html_header():
+def render_single_message(avatar_url, user_name, message_text, timestamp, layout_class):
+    return """            
+        <li class="{layout_class}">
+            <div class="chat-img">
+                <img alt="Avtar" src="{avatar_url}">
+            </div>
+            <div class="chat-body">
+                <div class="chat-message">
+                    <h5>{user_id} - {timestamp}</h5>
+                    <p>{message_text}</p>
+                </div>
+            </div>
+        </li>                
+    """.format(user_id=user_name, message_text=message_text, timestamp=timestamp, layout_class=layout_class, avatar_url=avatar_url)
+
+def render_html_header():
     return """
             <!DOCTYPE html>
             <html>
