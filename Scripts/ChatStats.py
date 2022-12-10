@@ -9,5 +9,9 @@ conversation = RawChatIntakeConverter.google_messages_to_generic(
 
 stat_block = GenericChatAnalyzer.conversation_to_stat_blocks(conversation)
 
-ConversationViewerProcessor.conversation_to_viewer(conversation)
-#StatBlockProcessor.process_stats(stat_block)
+if Config.output_type == Config.Output.STATS:
+    StatBlockProcessor.process_stats(stat_block)
+elif Config.output_type == Config.Output.VIEWER:
+    ConversationViewerProcessor.conversation_to_viewer(conversation)
+else:    
+    StatBlockProcessor.process_stats(stat_block)
